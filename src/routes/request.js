@@ -70,8 +70,6 @@ requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, r
 
         const data = await connectionRequest.save();
 
-        
-
         res.send("Connection request reviewed successfully!!!", data);
     }
     catch (err) {

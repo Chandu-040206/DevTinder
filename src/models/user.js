@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        minLength: 4,
+        minLength: 3,
         maxLength: 20
     },
     lastName: {
@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
     age: {
         type: Number,
         min: 10,
-        max: 30
+        max: 80
     },
     gender: {
         type: String,
@@ -48,6 +48,13 @@ const userSchema = new mongoose.Schema({
     skills: {
         type: [String],
         default: "Javascript"
+    },
+    photoUrl :{
+        type : String
+    },
+    about : {
+        type : String,
+        default : "This is the default description"
     }
 }, { timestamps: true });
 

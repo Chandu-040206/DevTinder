@@ -7,11 +7,13 @@ const { validateSignUpData } = require("../utils/validate");
 authRouter.post("/signup", async (req, res) => {
     try {
         validateSignUpData(req)
-        const { firstName, lastName, emailId, password, age, gender, skills } = req.body;
+        const { firstName, lastName, emailId, password, age, gender, skills ,photoUrl,about} = req.body;
         const hashPassword = await bcrypt.hash(password, 10);
-        const user = new User({ firstName, lastName, emailId, password: hashPassword, age, gender, skills });
-        await user.save();
-        res.send("Data successfully saved in Database");
+        const user = new User({ firstName, lastName, emailId, password: hashPassword, age, gender, skills,photoUrl,about});
+        const savedUser = await user.save();
+        const token = await savedUser.getJWT()
+            res.cookie("token", token);
+        res.json({message : "Data successfully saved in Database",data:savedUser});
     } catch (err) {
         res.status(400).send("Something went wrong : " + err.message);
     }
@@ -28,14 +30,14 @@ authRouter.post("/login", async (req, res) => {
         if (isPasswordValid) {
             const token = await user.getJWT()
             res.cookie("token", token);
-            res.send("Login Successfull!!")
+            res.send(user)
         }
         else {
-            throw new Error("Invalid credentials")
+            throw new Error("Invalid credentials!!")
         }
     }
     catch (err) {
-        res.status(400).send("Something went wrong : " + err.message);
+        res.status(400).send( err.message);
     }
 });
 
