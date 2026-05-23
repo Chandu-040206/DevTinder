@@ -9,11 +9,13 @@ const userSchema = new mongoose.Schema({
         minLength: 3,
         maxLength: 20
     },
+
     lastName: {
         type: String,
         minLength: 4,
         maxLength: 20
     },
+
     emailId: {
         type: String,
         required: true,
@@ -22,54 +24,73 @@ const userSchema = new mongoose.Schema({
         unique: true,
         validate(value) {
             if (!validator.isEmail(value)) {
-                throw new Error("Email not valid")
+                throw new Error("Email not valid");
             }
         }
     },
+
     password: {
         type: String,
         required: true,
         minLength: 4,
         maxLength: 90
     },
+
     age: {
         type: Number,
         min: 10,
         max: 80
     },
+
     gender: {
         type: String,
         validate(data) {
             if (!["male", "female"].includes(data)) {
-                throw new Error("Invalid data for Gender")
+                throw new Error("Invalid data for Gender");
             }
         }
     },
+
     skills: {
         type: [String],
         default: "Javascript"
     },
-    photoUrl :{
-        type : String,
-        default:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbU22T0qtEH_vTSNZuPK7QXl99aCr3xmagVA&s"
+
+    photoUrl: {
+        type: String,
+        default:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbU22T0qtEH_vTSNZuPK7QXl99aCr3xmagVA&s"
     },
-    about : {
-        type : String,
-        default : "This is the default description"
+
+    about: {
+        type: String,
+        default: "This is the default description"
+    },
+
+    lastActive: {
+        type: Date,
+        default: Date.now
     }
+
 }, { timestamps: true });
 
 userSchema.methods.getJWT = async function () {
-    const user = this;
-    const token = await jwt.sign({ _id: this._id }, "Chandu@123");
+    const token = await jwt.sign(
+        { _id: this._id },
+        "Chandu@123"
+    );
     return token;
 };
 
-userSchema.methods.validatePassword = async function(password){
-    const user = this;
+userSchema.methods.validatePassword = async function (password) {
     const hashPassword = this.password;
-     const isPasswordValid = await bcrypt.compare(password, hashPassword);
+
+    const isPasswordValid = await bcrypt.compare(
+        password,
+        hashPassword
+    );
+
     return isPasswordValid;
-}
+};
 
 module.exports = mongoose.model("User", userSchema);
